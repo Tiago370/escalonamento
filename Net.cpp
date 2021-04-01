@@ -50,9 +50,8 @@ void Net::openNet(string arquivo){
 	int nHiddenNeurons;
 	int nOutputs;
 
+	int retornoLeitura;
 	FILE *arq;
-	char Linha[100];
-	int i;
     char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
     arquivo.copy(arqui, arquivo.size() + 1);
     arqui[arquivo.size()] = '\0';
@@ -63,7 +62,7 @@ void Net::openNet(string arquivo){
     	return;
   	}
   	//ler dimensões da rede
-	fscanf(arq, "%d %d %d %d", &nInputs, &nHiddenLayers, &nHiddenNeurons, &nOutputs); 
+	retornoLeitura = fscanf(arq, "%d %d %d %d", &nInputs, &nHiddenLayers, &nHiddenNeurons, &nOutputs); 
 
 	this->nInputs = nInputs;
 	this->nHiddenLayers = nHiddenLayers;
@@ -79,7 +78,7 @@ void Net::openNet(string arquivo){
 		layers[0].push_back(nInputs);
 		//ler o bias do neurônio
 		double bias;
-		fscanf(arq, "%lf", &bias);
+		retornoLeitura = fscanf(arq, "%lf", &bias);
 		//atualizar o bias no neurônio
 		layers[0][i].setBias(bias);
 		//obter o apontador para os pesos
@@ -89,7 +88,7 @@ void Net::openNet(string arquivo){
 		//ler os pesos
 		for(int j = 0; j < this->nInputs; j++){
 			double peso;
-			fscanf(arq, "%lf", &peso);
+			retornoLeitura = fscanf(arq, "%lf", &peso);
 			aux->push_back(peso);
 		}
 	}
@@ -100,7 +99,7 @@ void Net::openNet(string arquivo){
 			layers[l].push_back(nHiddenNeurons);
 			//ler o bias do neurônio
 			double bias;
-			fscanf(arq, "%lf", &bias);
+			retornoLeitura = fscanf(arq, "%lf", &bias);
 			//atualizar o bias no neurônio
 			layers[l][i].setBias(bias);
 			//obter o apontador para os pesos
@@ -110,7 +109,7 @@ void Net::openNet(string arquivo){
 			//ler os pesos
 			for(int j = 0; j < nHiddenNeurons; j++){
 				double peso;
-				fscanf(arq, "%lf", &peso);
+				retornoLeitura = fscanf(arq, "%lf", &peso);
 				aux->push_back(peso);
 			}
 
@@ -122,7 +121,7 @@ void Net::openNet(string arquivo){
 		layers[nHiddenLayers].push_back(nHiddenNeurons);
 		//ler o bias do neurônio
 		double bias;
-		fscanf(arq, "%lf", &bias);
+		retornoLeitura = fscanf(arq, "%lf", &bias);
 		//atualizar o bias no neurônio
 		layers[nHiddenLayers][i].setBias(bias);
 		//obter o apontador para os pesos
@@ -132,11 +131,12 @@ void Net::openNet(string arquivo){
 		//ler os pesos
 		for(int j = 0; j < nHiddenNeurons; j++){
 			double peso;
-			fscanf(arq, "%lf", &peso);
+			retornoLeitura = fscanf(arq, "%lf", &peso);
 			aux->push_back(peso);
 		}
 	}
   	fclose(arq);
+	if(retornoLeitura == EOF) cout << "Erro de leitura" << endl;
 }
 void Net::saveNet(string arquivo){
 	FILE *arq;

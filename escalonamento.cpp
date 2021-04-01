@@ -1,0 +1,39 @@
+#include<stdio.h>
+#include<iostream>
+#include "escalonamento.h"
+
+#define DEBUG 0
+
+Escalonamento::Escalonamento(){
+    nMachines = 0;
+	nTasks = 0;
+    nextTask = 0;
+    numberNextTask = 0;
+}
+
+Escalonamento::~Escalonamento(){}
+
+void Escalonamento::readInstance(string arquivo){
+    FILE *arq;
+    char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
+    arquivo.copy(arqui, arquivo.size() + 1);
+    arqui[arquivo.size()] = '\0';
+	// Abre um arquivo TEXTO para LEITURA
+	arq = fopen(arqui, "rt");
+	if (arq == NULL){  // Se houve erro na abertura
+		printf("Problemas na abertura do arquivo\n");
+    	return;
+  	}
+    int erroLeitura;
+  	//ler o número de máquinas e o número de tarefas
+	erroLeitura = fscanf(arq, "%d %d", &nMachines, &nTasks);
+    //ler as tarefas
+    for(int i = 0; i < nTasks; i++){
+        int itemTask;
+        erroLeitura = fscanf(arq, "%d", &itemTask);
+        task.push_back(itemTask);
+    }
+  	fclose(arq);
+    nextTask = task[0];
+    if(erroLeitura == EOF) cout << "Erro de leitura" << endl;
+}
