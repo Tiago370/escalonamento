@@ -36,4 +36,25 @@ void Escalonamento::readInstance(string arquivo){
   	fclose(arq);
     nextTask = task[0];
     if(erroLeitura == EOF) cout << "Erro de leitura" << endl;
+    //criar as maquinas
+    for(int i = 0; i < nMachines; i++){
+        machine.push_back(0);
+    }
+}
+unsigned int Escalonamento::getNextTask(){
+    return  nextTask;
+}
+unsigned int Escalonamento::getNumberNextTask(){
+    return (unsigned int) numberNextTask;
+}
+unsigned int Escalonamento::getSensorMachine(unsigned int i){
+    return machine[i];
+}
+void Escalonamento::putTaskOnTheMachine(unsigned int i){
+    machine[i] += nextTask;
+    numberNextTask++;
+    nextTask = task[numberNextTask];
+}
+unsigned int Escalonamento::getNumberTask(){
+    return nTasks;
 }
