@@ -6,13 +6,17 @@ using namespace std;
 class Escalonamento{
 public:
     void readInstance(string arquivo);
-    unsigned int getNumberTask();
+    unsigned int getNumberTasks();
+    unsigned int getNumberMachines();
+    unsigned int getMakeSpan();
+
 
     //sensores
     unsigned int getNextTask();
     unsigned int getNumberNextTask();
     unsigned int getSensorMachine(unsigned int i);
-
+    bool escalando();
+    void reset();
     //controles
     void putTaskOnTheMachine(unsigned int i);
 	Escalonamento();
@@ -27,4 +31,6 @@ private:
 	int nTasks;
     int nextTask;
     int numberNextTask;
+    unsigned int makeSpan;
+    bool escal;
 };

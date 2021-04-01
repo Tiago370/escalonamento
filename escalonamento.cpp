@@ -9,6 +9,8 @@ Escalonamento::Escalonamento(){
 	nTasks = 0;
     nextTask = 0;
     numberNextTask = 0;
+    makeSpan = 0;
+    escal = true;
 }
 
 Escalonamento::~Escalonamento(){}
@@ -52,9 +54,29 @@ unsigned int Escalonamento::getSensorMachine(unsigned int i){
 }
 void Escalonamento::putTaskOnTheMachine(unsigned int i){
     machine[i] += nextTask;
+    if(machine[i] > makeSpan) makeSpan = machine[i];
+
     numberNextTask++;
-    nextTask = task[numberNextTask];
+    if(numberNextTask == nTasks){
+        escal = false;
+    }else{
+        nextTask = task[numberNextTask];
+    }
 }
-unsigned int Escalonamento::getNumberTask(){
+unsigned int Escalonamento::getNumberTasks(){
     return nTasks;
 }
+unsigned int Escalonamento::getNumberMachines(){
+    return nMachines;
+}
+ unsigned int Escalonamento::getMakeSpan(){
+     return makeSpan;
+ }
+ bool Escalonamento::escalando(){
+     return escal;
+ }
+ void Escalonamento::reset(){
+    nextTask = 0;
+    numberNextTask = 0;
+    makeSpan = 0;   
+ }
