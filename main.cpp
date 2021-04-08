@@ -4,6 +4,7 @@
 
 using namespace std;
 int main() {
-	escalonamento_training();
+	//escalonamento_training();
+	run("instancias/sched_11_103_embaralhado2");
 	return 0;
 }

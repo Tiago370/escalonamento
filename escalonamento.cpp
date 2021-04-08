@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<iostream>
 #include "escalonamento.h"
-
+#include "Util.h"
 #define DEBUG 0
 
 Escalonamento::Escalonamento(){
@@ -21,7 +21,7 @@ void Escalonamento::readInstance(string arquivo){
     arquivo.copy(arqui, arquivo.size() + 1);
     arqui[arquivo.size()] = '\0';
 	// Abre um arquivo TEXTO para LEITURA
-	arq = fopen(arqui, "rt");
+	arq = fopen(arqui, "r");
 	if (arq == NULL){  // Se houve erro na abertura
 		printf("Problemas na abertura do arquivo\n");
     	return;
@@ -33,8 +33,11 @@ void Escalonamento::readInstance(string arquivo){
     for(int i = 0; i < nTasks; i++){
         int itemTask;
         erroLeitura = fscanf(arq, "%d", &itemTask);
+        //cout << itemTask << " ";
         task.push_back(itemTask);
     }
+    
+    cout << endl;
   	fclose(arq);
     nextTask = task[0];
     if(erroLeitura == EOF) cout << "Erro de leitura" << endl;
@@ -49,13 +52,13 @@ unsigned int Escalonamento::getNextTask(){
 unsigned int Escalonamento::getNumberNextTask(){
     return (unsigned int) numberNextTask;
 }
-unsigned int Escalonamento::getSensorMachine(unsigned int i){
-    return machine[i];
+double Escalonamento::getSensorMachine(unsigned int i){
+    if(nextTask == 0) nextTask = 1;
+    return machine[i]/nextTask;
 }
 void Escalonamento::putTaskOnTheMachine(unsigned int i){
-    machine[i] += nextTask;
-    if(machine[i] > makeSpan) makeSpan = machine[i];
-
+    empacota(machine, i, nextTask);
+    makeSpan = machine[0];
     numberNextTask++;
     if(numberNextTask == nTasks){
         escal = false;
@@ -76,7 +79,21 @@ unsigned int Escalonamento::getNumberMachines(){
      return escal;
  }
  void Escalonamento::reset(){
-    nextTask = 0;
+    nextTask = task[0];
     numberNextTask = 0;
     makeSpan = 0;   
+ 
+    for(int i = 0; i < nMachines; i++){
+        machine[i] = 0;
+    }
+
+ }
+ void Escalonamento::printMachine(){
+     for(int i = 0; i < nMachines; i++){
+         cout << machine[i] << " ";
+     }
+     cout << endl;
+ }
+ vector<unsigned int>* Escalonamento::getTasks(){
+     return &task;
  }

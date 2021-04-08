@@ -6,7 +6,7 @@
 //#include "escalonamento.h"
 #include "Net.h"
 using namespace std;
-void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs){
+void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, bool imprime){
 	//estruturas auxiliares
     vector<double> inputs(nInputs);
 	vector<double> outputs(nOutputs);
@@ -14,36 +14,38 @@ void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs){
         for(unsigned int i = 0; i < escalonamento->getNumberMachines(); i++){
             inputs[i] = escalonamento->getSensorMachine(i);
         }
-        inputs[11] = escalonamento->getNumberNextTask();
-        inputs[12] = escalonamento->getNextTask();
-
+        //inputs[11] = escalonamento->getNumberNextTask();
+        inputs[11] = escalonamento->getNextTask();
+        if(imprime) cout << "index: " << escalonamento->getNumberNextTask() << " tam: " << escalonamento->getNextTask() << endl;
         net->activateLayers(&(inputs), &outputs);
         bool flag = false;
         for(unsigned int j = 0; j < outputs.size(); j++){
             if(outputs[j] > 0){
                 escalonamento->putTaskOnTheMachine(j);
+                if (imprime)escalonamento->printMachine();
                 flag = true;
                 break;
             }
         }
-        if(!flag) escalonamento->putTaskOnTheMachine(0);
+        if(!flag) escalonamento->putTaskOnTheMachine(nOutputs-1);
         //cout << escalonamento->getNumberMachines() << endl;
     }
 //    double fitness = (double)net->getFitness() + (double)square->fitness();
     net->setFitness(net->getFitness() + escalonamento->getMakeSpan());
+    if (imprime)escalonamento->printMachine();
     escalonamento->reset();
 }
 
 void escalonamento_training(){
 	srand(666); //Fixar uma seed para permitir a reprodutibulidade
 
-	int nInputs = 13;// 11 maquinas + numero da tarefa + tarefa
-	int nHiddenLayers = 10;
-	int nHiddenNeurons = 10;
+	int nInputs = 12;// 11 maquinas + numero da tarefa + tarefa
+	int nHiddenLayers = 2;
+	int nHiddenNeurons = 13;
 	int nOutputs = 11;
 
-	int nGenerations = 1000;
-	int nPopulation = 50;
+	int nGenerations = 500;
+	int nPopulation = 100;
 
     //criar o conjuto de pares
     unsigned int nTrainingSet = 5;
@@ -71,7 +73,7 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
             populacao[i].setFitness(0);
             //Para cada caso de teste
             for(int j = 0; j < nTrainingSet; j++){
-                play(&populacao[i], &(escalonamentos->at(j)), nInputs, nOutputs);
+                play(&populacao[i], &(escalonamentos->at(j)), nInputs, nOutputs, false);
                 //if(j == 0) exit(0);
             }
             if(populacao[i].getFitness() < fitness){
@@ -109,6 +111,11 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
 
 	}
     cout << "Fitness do campeão " << champion.getFitness() << endl;
+    //play(&champion, &(escalonamentos->at(0)), 13, 11, true);
+    //play(&champion, &(escalonamentos->at(1)), 13, 11, true);
+    //play(&champion, &(escalonamentos->at(2)), 13, 11, true);
+    play(&champion, &(escalonamentos->at(3)), 12, 11, true);
+    //play(&champion, &(escalonamentos->at(4)), 13, 11, true);
     champion.saveNet("champion.txt");
 }
 
@@ -131,4 +138,20 @@ void generateTrainingSet(vector<Escalonamento>* escalonamentos, unsigned int nTr
 	    escalonamento.readInstance(arqui);
         escalonamentos->push_back(escalonamento);
     }
+    /*for(unsigned int i = 0; i < nTrainingSet; i++){
+        vector<unsigned int>* v = escalonamentos->at(i).getTasks();
+        for (unsigned int j = 0; j < escalonamentos->at(i).getNumberTasks(); j++){
+            cout << (*v)[j] << " ";
+        }
+       // cout << endl << endl;
+        
+    }*/
  }
+ void run(string escal_arqui){
+    Escalonamento escalonamento = Escalonamento();
+	escalonamento.readInstance(escal_arqui);
+	Net net = Net(1,1,1,1);
+	net.openNet("champion.txt");
+    play(&net, &escalonamento, net.getNInputs(), net.getNOutput(), true);
+
+}

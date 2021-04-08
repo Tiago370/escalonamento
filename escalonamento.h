@@ -9,12 +9,13 @@ public:
     unsigned int getNumberTasks();
     unsigned int getNumberMachines();
     unsigned int getMakeSpan();
-
+    vector<unsigned int>* getTasks();
+    void printMachine();
 
     //sensores
     unsigned int getNextTask();
     unsigned int getNumberNextTask();
-    unsigned int getSensorMachine(unsigned int i);
+    double getSensorMachine(unsigned int i);
     bool escalando();
     void reset();
     //controles
