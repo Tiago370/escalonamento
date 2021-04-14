@@ -1,0 +1,5 @@
+instancias/sched_11_1009_crescente
+instancias/sched_11_1009_decrescente
+instancias/sched_11_1009_embaralhado1
+instancias/sched_11_1009_embaralhado2
+instancias/sched_11_1009_embaralhado3

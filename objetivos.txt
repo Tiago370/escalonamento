@@ -1,0 +1,13 @@
+[X] - Modular a ordenação.
+[X] - Modular a relativização das cargas e tarefas.
+[X] - Modular a subtração da menor carga.
+
+train
+run
+-order
+-relativize
+-subtract
+-net <arquivo>
+-instance <arquivo>
+-generations <nGenerations>
+-population <nPopulation>

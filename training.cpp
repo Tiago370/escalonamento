@@ -15,7 +15,9 @@ void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, boo
             inputs[i] = escalonamento->getSensorMachine(i);
         }
         //inputs[11] = escalonamento->getNumberNextTask();
-        inputs[11] = escalonamento->getNextTask();
+        if(!escalonamento->getRelativize()){
+            inputs[escalonamento->getNumberMachines()+1] = escalonamento->getNextTask();
+        }
         if(imprime) cout << "index: " << escalonamento->getNumberNextTask() << " tam: " << escalonamento->getNextTask() << endl;
         net->activateLayers(&(inputs), &outputs);
         bool flag = false;
@@ -36,25 +38,23 @@ void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, boo
     escalonamento->reset();
 }
 
-void escalonamento_training(){
+void escalonamento_training(char* net_file, char* instance_list_file, bool order, bool relativize, bool subtract, unsigned int nGenerations, unsigned int nPopulation){
 	srand(666); //Fixar uma seed para permitir a reprodutibulidade
 
-	int nInputs = 12;// 11 maquinas + numero da tarefa + tarefa
+	int nInputs = 11;// 11 maquinas + numero da tarefa + tarefa
+    if(!relativize) nInputs++;
 	int nHiddenLayers = 2;
 	int nHiddenNeurons = 13;
 	int nOutputs = 11;
 
-	int nGenerations = 500;
-	int nPopulation = 100;
-
     //criar o conjuto de pares
     unsigned int nTrainingSet = 5;
     vector<Escalonamento> escalonamentos;
-    generateTrainingSet(&escalonamentos, nTrainingSet);
-	squareRandom_mutation(nInputs, nHiddenLayers, nHiddenNeurons, nOutputs, nPopulation, nGenerations, &escalonamentos, nTrainingSet);
+    generateTrainingSet(&escalonamentos, nTrainingSet, instance_list_file, order, relativize, subtract);
+	squareRandom_mutation(nInputs, nHiddenLayers, nHiddenNeurons, nOutputs, nPopulation, nGenerations, &escalonamentos, nTrainingSet, net_file);
 }
 void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, int nOutputs,
-		int nPopulation, int nGenerations, vector<Escalonamento>* escalonamentos, int nTrainingSet){
+		int nPopulation, int nGenerations, vector<Escalonamento>* escalonamentos, int nTrainingSet, char* net_file){
 	Net champion(nInputs, nHiddenLayers, nHiddenNeurons, nOutputs);
     champion.setFitness(__DBL_MAX__);
 	vector<Net> populacao;
@@ -84,7 +84,6 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
             }
 
         }
-
 		//Tentativa 1: os piores individuos serao refeitos, isso introduz aleatoriedade
 		sort(populacao.begin(), populacao.end(), squareCompareByFitness);
         for(unsigned int i = 0 ; i < populacao.size(); i++){
@@ -114,9 +113,9 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
     //play(&champion, &(escalonamentos->at(0)), 13, 11, true);
     //play(&champion, &(escalonamentos->at(1)), 13, 11, true);
     //play(&champion, &(escalonamentos->at(2)), 13, 11, true);
-    play(&champion, &(escalonamentos->at(3)), 12, 11, true);
+    play(&champion, &(escalonamentos->at(3)), nInputs, 11, true);
     //play(&champion, &(escalonamentos->at(4)), 13, 11, true);
-    champion.saveNet("champion.txt");
+    champion.saveNet(net_file);
 }
 
 bool squareCompareByFitness(Net &a, Net &b){
@@ -126,32 +125,34 @@ bool squareCompareByFitness(Net &a, Net &b){
 	return false;
 }
 
-void generateTrainingSet(vector<Escalonamento>* escalonamentos, unsigned int nTrainingSet){
-    string pasta = "instancias/";
-    vector <string> arquivos = {"sched_11_1009_crescente","sched_11_1009_decrescente","sched_11_1009_embaralhado1","sched_11_1009_embaralhado2","sched_11_1009_embaralhado3"};
+void generateTrainingSet(vector<Escalonamento>* escalonamentos, unsigned int nTrainingSet,  char* instance_list_file, bool order, bool relativize, bool subtract){
+    printf("Lendo instâncias da lista %s\n", instance_list_file);
+    FILE *arq_instance_list_file;
+    arq_instance_list_file = fopen(instance_list_file, "r");
+    if (arq_instance_list_file == NULL){  // Se houve erro na abertura
+        printf("Problemas na abertura do arquivo '%s'\n", instance_list_file);
+  	}
+    //string pasta = "instancias/";
+    //vector <string> arquivos = {"sched_11_1009_crescente","sched_11_1009_decrescente","sched_11_1009_embaralhado1","sched_11_1009_embaralhado2","sched_11_1009_embaralhado3"};
     for(unsigned int i = 0; i < nTrainingSet; i++){
-        string caminho = pasta + arquivos[i];
-        char *arqui = (char*) malloc((caminho.size() + 1)*sizeof(char));
-        caminho.copy(arqui, caminho.size() + 1);
-        arqui[caminho.size()] = '\0';
+        char* instance = (char*) malloc(sizeof(char)*100);
+        int retornoLeitura = fscanf(arq_instance_list_file, "%s", instance);
+        if(!retornoLeitura) printf("Problemas na abertura do arquivo '%s'\n", instance);
+        printf("%s\n", instance);
         Escalonamento escalonamento = Escalonamento();
-	    escalonamento.readInstance(arqui);
+	    escalonamento.readInstance(instance);
+        escalonamento.setOrder(order);
+        escalonamento.setRelativize(relativize);
+        escalonamento.setSubtract(subtract);
         escalonamentos->push_back(escalonamento);
     }
-    /*for(unsigned int i = 0; i < nTrainingSet; i++){
-        vector<unsigned int>* v = escalonamentos->at(i).getTasks();
-        for (unsigned int j = 0; j < escalonamentos->at(i).getNumberTasks(); j++){
-            cout << (*v)[j] << " ";
-        }
-       // cout << endl << endl;
-        
-    }*/
+    fclose(arq_instance_list_file);
  }
- void run(string escal_arqui){
+ void run(string net_file, string instance_file){
     Escalonamento escalonamento = Escalonamento();
-	escalonamento.readInstance(escal_arqui);
+	escalonamento.readInstance(instance_file);
 	Net net = Net(1,1,1,1);
-	net.openNet("champion.txt");
+	net.openNet(net_file);
     play(&net, &escalonamento, net.getNInputs(), net.getNOutput(), true);
 
 }

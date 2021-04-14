@@ -11,6 +11,10 @@ public:
     unsigned int getMakeSpan();
     vector<unsigned int>* getTasks();
     void printMachine();
+    void setOrder(bool pOrder);
+    void setRelativize(bool pRelativize);
+    bool getRelativize();
+    void setSubtract(bool pSubtract);
 
     //sensores
     unsigned int getNextTask();
@@ -34,4 +38,7 @@ private:
     int numberNextTask;
     unsigned int makeSpan;
     bool escal;
+    bool order;
+    bool relativize;
+    bool subtract;
 };

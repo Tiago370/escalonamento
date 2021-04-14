@@ -1,8 +1,8 @@
 #include<stdio.h>
 #include<iostream>
+#include<limits.h>
 #include "escalonamento.h"
 #include "Util.h"
-#define DEBUG 0
 
 Escalonamento::Escalonamento(){
     nMachines = 0;
@@ -11,6 +11,8 @@ Escalonamento::Escalonamento(){
     numberNextTask = 0;
     makeSpan = 0;
     escal = true;
+    order = false;
+    relativize = false;
 }
 
 Escalonamento::~Escalonamento(){}
@@ -33,11 +35,8 @@ void Escalonamento::readInstance(string arquivo){
     for(int i = 0; i < nTasks; i++){
         int itemTask;
         erroLeitura = fscanf(arq, "%d", &itemTask);
-        //cout << itemTask << " ";
         task.push_back(itemTask);
     }
-    
-    cout << endl;
   	fclose(arq);
     nextTask = task[0];
     if(erroLeitura == EOF) cout << "Erro de leitura" << endl;
@@ -53,18 +52,38 @@ unsigned int Escalonamento::getNumberNextTask(){
     return (unsigned int) numberNextTask;
 }
 double Escalonamento::getSensorMachine(unsigned int i){
-    if(nextTask == 0) nextTask = 1;
-    return machine[i]/nextTask;
+    unsigned int smallestMachine;
+    if(subtract){
+        if(order){
+            smallestMachine = machine[nMachines-1];
+        }else{
+            smallestMachine = INT32_MAX;
+            for(unsigned int j = 0; j < nMachines; j++){
+                if(machine[j] < smallestMachine) smallestMachine = machine[j];
+            }
+        }
+    }else{
+        smallestMachine = 0;
+    }
+    if(relativize){
+        if(nextTask == 0) nextTask = 1;
+        return (machine[i] - smallestMachine)/nextTask;    
+    }else{
+        return (machine[i] - smallestMachine);
+    }
 }
 void Escalonamento::putTaskOnTheMachine(unsigned int i){
-    empacota(machine, i, nextTask);
-    makeSpan = machine[0];
-    numberNextTask++;
-    if(numberNextTask == nTasks){
-        escal = false;
+    if(order){
+        empacota(machine, i, nextTask);
+        makeSpan = machine[0];
     }else{
-        nextTask = task[numberNextTask];
+        machine[i] += nextTask;
+        if(makeSpan < machine[i]){
+            makeSpan = machine[i];  
+        }
     }
+    numberNextTask++;
+    nextTask = task[numberNextTask];
 }
 unsigned int Escalonamento::getNumberTasks(){
     return nTasks;
@@ -96,4 +115,16 @@ unsigned int Escalonamento::getNumberMachines(){
  }
  vector<unsigned int>* Escalonamento::getTasks(){
      return &task;
+ }
+ void Escalonamento::setOrder(bool pOrder){
+     this->order = pOrder;
+ }
+ void Escalonamento::setRelativize(bool pRelativize){
+    this->relativize = pRelativize;
+ }
+ bool Escalonamento::getRelativize(){
+     return this->relativize;
+ }
+ void  Escalonamento::setSubtract(bool pSubtract){
+     this->subtract = pSubtract;
  }

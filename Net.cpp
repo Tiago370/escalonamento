@@ -145,6 +145,7 @@ void Net::saveNet(string arquivo){
     arqui[arquivo.size()] = '\0';
 	// Abre um arquivo TEXTO para ESCRITA
 	arq = fopen(arqui, "w");
+	free(arqui);
 	if (arq == NULL){  // Se houve erro na abertura
 		printf("Problemas na abertura do arquivo\n");
     	return;
