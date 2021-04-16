@@ -44,7 +44,7 @@ Net::Net(int nInputs, int nHiddenLayers, int nHiddenNeurons, int nOutput){
 }
 
 Net::~Net(){}
-void Net::openNet(string arquivo){
+void Net::openNet(char* arquiv){
 	int nInputs;
 	int nHiddenLayers;
 	int nHiddenNeurons;
@@ -52,11 +52,11 @@ void Net::openNet(string arquivo){
 
 	int retornoLeitura;
 	FILE *arq;
-    char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
-    arquivo.copy(arqui, arquivo.size() + 1);
-    arqui[arquivo.size()] = '\0';
+    //char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
+    //arquivo.copy(arqui, arquivo.size() + 1);
+    //arqui[arquivo.size()] = '\0';
 	// Abre um arquivo TEXTO para LEITURA
-	arq = fopen(arqui, "rt");
+	arq = fopen(arquiv, "r");
 	if (arq == NULL){  // Se houve erro na abertura
 		printf("Problemas na abertura do arquivo\n");
     	return;

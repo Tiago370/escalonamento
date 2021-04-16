@@ -11,3 +11,5 @@ run
 -instance <arquivo>
 -generations <nGenerations>
 -population <nPopulation>
+
+./build/escalonamento train -order -relativize -subtract -net ORS500-100-1x1 -instance instancias_train.txt -generations 500 -population 100 -hidden-layers 1 -hidden-neurons 1

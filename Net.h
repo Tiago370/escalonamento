@@ -44,7 +44,7 @@ public:
 	void copiar_rede(Net * origem);
 	void imprimeRede();
 	void rerandom();
-	void openNet(string arquivo);
+	void openNet(char* arquiv);
 	void saveNet(string arquivo);
 
 private:

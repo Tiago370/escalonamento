@@ -17,13 +17,13 @@ Escalonamento::Escalonamento(){
 
 Escalonamento::~Escalonamento(){}
 
-void Escalonamento::readInstance(string arquivo){
+void Escalonamento::readInstance(char* arquiv){
     FILE *arq;
-    char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
-    arquivo.copy(arqui, arquivo.size() + 1);
-    arqui[arquivo.size()] = '\0';
+    //char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
+    //arquivo.copy(arqui, arquivo.size() + 1);
+    //arqui[arquivo.size()] = '\0';
 	// Abre um arquivo TEXTO para LEITURA
-	arq = fopen(arqui, "r");
+	arq = fopen(arquiv, "r");
 	if (arq == NULL){  // Se houve erro na abertura
 		printf("Problemas na abertura do arquivo\n");
     	return;
@@ -58,7 +58,7 @@ double Escalonamento::getSensorMachine(unsigned int i){
             smallestMachine = machine[nMachines-1];
         }else{
             smallestMachine = INT32_MAX;
-            for(unsigned int j = 0; j < nMachines; j++){
+            for(int j = 0; j < nMachines; j++){
                 if(machine[j] < smallestMachine) smallestMachine = machine[j];
             }
         }

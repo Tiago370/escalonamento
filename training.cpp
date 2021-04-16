@@ -38,13 +38,11 @@ void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, boo
     escalonamento->reset();
 }
 
-void escalonamento_training(char* net_file, char* instance_list_file, bool order, bool relativize, bool subtract, unsigned int nGenerations, unsigned int nPopulation){
+void escalonamento_training(char* net_file, char* instance_list_file, bool order, bool relativize, bool subtract, unsigned int nGenerations, unsigned int nPopulation, unsigned int nHiddenLayers, unsigned int nHiddenNeurons){
 	srand(666); //Fixar uma seed para permitir a reprodutibulidade
 
 	int nInputs = 11;// 11 maquinas + numero da tarefa + tarefa
     if(!relativize) nInputs++;
-	int nHiddenLayers = 2;
-	int nHiddenNeurons = 13;
 	int nOutputs = 11;
 
     //criar o conjuto de pares
@@ -148,11 +146,20 @@ void generateTrainingSet(vector<Escalonamento>* escalonamentos, unsigned int nTr
     }
     fclose(arq_instance_list_file);
  }
- void run(string net_file, string instance_file){
+ void run(char* net_file, char* instance_file, bool order, bool relativize, bool subtract){
     Escalonamento escalonamento = Escalonamento();
+    printf("%s\n",instance_file);
 	escalonamento.readInstance(instance_file);
+    cout << "run" << endl;
+    escalonamento.setOrder(order);
+    escalonamento.setRelativize(relativize);
+    escalonamento.setSubtract(subtract);
+    cout << "run" << endl;
 	Net net = Net(1,1,1,1);
+    printf("%s\n",net_file);
 	net.openNet(net_file);
+    printf("%s\n",net_file);
+    cout << "run" << endl;
     play(&net, &escalonamento, net.getNInputs(), net.getNOutput(), true);
 
 }

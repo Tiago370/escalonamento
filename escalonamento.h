@@ -5,7 +5,7 @@ using namespace std;
 
 class Escalonamento{
 public:
-    void readInstance(string arquivo);
+    void readInstance(char* arquiv);
     unsigned int getNumberTasks();
     unsigned int getNumberMachines();
     unsigned int getMakeSpan();
