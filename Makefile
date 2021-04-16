@@ -5,23 +5,23 @@ all: build/escalonamento
 build/escalonamento: build/Neuron.o build/Net.o build/escalonamento.o build/main.o build/Util.o build/training.o
 	$(CXX) $(CXXFLAGS) -o build/escalonamento build/*.o
 
-build/Neuron.o: Neuron.cpp Neuron.h
-	$(CXX) $(CXXFLAGS) -c Neuron.cpp -o build/Neuron.o
+build/Neuron.o: src/Neuron.cpp src/Neuron.h
+	$(CXX) $(CXXFLAGS) -c src/Neuron.cpp -o build/Neuron.o
 
-build/Net.o: Net.cpp Net.h
-	$(CXX) $(CXXFLAGS) -c Net.cpp -o build/Net.o
+build/Net.o: src/Net.cpp src/Net.h
+	$(CXX) $(CXXFLAGS) -c src/Net.cpp -o build/Net.o
 	
-build/escalonamento.o: escalonamento.cpp escalonamento.h
-	$(CXX) $(CXXFLAGS) -c escalonamento.cpp -o build/escalonamento.o
+build/escalonamento.o: src/escalonamento.cpp src/escalonamento.h
+	$(CXX) $(CXXFLAGS) -c src/escalonamento.cpp -o build/escalonamento.o
 
-build/Util.o: Util.cpp Util.h
-	$(CXX) $(CXXFLAGS) -c Util.cpp -o build/Util.o
+build/Util.o: src/Util.cpp src/Util.h
+	$(CXX) $(CXXFLAGS) -c src/Util.cpp -o build/Util.o
 
-build/training.o: training.cpp training.h
-	$(CXX) $(CXXFLAGS) -c training.cpp -o build/training.o
+build/training.o: src/training.cpp src/training.h
+	$(CXX) $(CXXFLAGS) -c src/training.cpp -o build/training.o
 
-build/main.o: main.cpp
-	$(CXX) $(CXXFLAGS) -c main.cpp -o build/main.o
+build/main.o: src/main.cpp
+	$(CXX) $(CXXFLAGS) -c src/main.cpp -o build/main.o
 
 clean:
 	$(RM) build/*.o build/rand-muta-neural-network
