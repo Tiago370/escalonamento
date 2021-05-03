@@ -50,7 +50,8 @@ void empacota(vector<unsigned int> &v, int pos, int value){
     v[pos] += value;
     int a = retira(v, pos);
     insereNoComeco(v, a);
-    for(unsigned int i = 0; v[i] < v[i+1]; i++){
+    for(unsigned int i = 0; i < v.size()-1; i++){
+        if(v[i] > v[i+1]) break;
         int aux = v[i];
         v[i] = v[i+1];
         v[i+1] = aux;

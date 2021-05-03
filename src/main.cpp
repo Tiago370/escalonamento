@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
         printf("    ./build/escalonamento <função>\n");
         exit(1);
     }else if (strcmp("run", argv[1]) == 0){
+		printf("entrou run");
 		for(int i = 2; i < argc; i++){
 			if(strcmp("-order", argv[i]) == 0){
 				order = true;
@@ -38,8 +39,9 @@ int main(int argc, char **argv) {
 				strcpy(instance_file, argv[i+1]);
 				//printf("%s\n", instance_list_file);
 			}else{}
+			printf("bbbbbbbbbbbbbbbb\n");
 		}
-		
+		printf("aaaaaaaaaaaaaaaaaa\n");
 		run(net_file, instance_file, order, relativize, subtract);
         exit(0);
     }else if (strcmp("train", argv[1]) == 0){
@@ -62,15 +64,17 @@ int main(int argc, char **argv) {
 				printf("nGenerations: %d\n", nGenerations);
 			}else if(strcmp("-population", argv[i]) == 0){
 				nPopulation = atoi(argv[i+1]);
-			}else if(strcmp("hidden-layers", argv[i]) == 0){
+			}else if(strcmp("-hidden-layers", argv[i]) == 0){
 				nHiddenLayers = atoi(argv[i+1]);
-			}else if(strcmp("hidden-neurons", argv[i]) == 0){
+				printf("nHiddenLayers: %d\n", nHiddenLayers);
+			}else if(strcmp("-hidden-neurons", argv[i]) == 0){
 				nHiddenNeurons = atoi(argv[i+1]);
 			}else{}
 		}
 		escalonamento_training(net_file, instance_list_file, order, relativize, subtract, nGenerations, nPopulation, nHiddenLayers, nHiddenNeurons);
-	}
-	free(net_file);
-	free(instance_list_file);
+		//exit(1);
+	}else{}
+	//free(net_file);
+	//free(instance_list_file);
 	return 0;
 }

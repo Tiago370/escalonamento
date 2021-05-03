@@ -138,14 +138,14 @@ void Net::openNet(char* arquiv){
   	fclose(arq);
 	if(retornoLeitura == EOF) cout << "Erro de leitura" << endl;
 }
-void Net::saveNet(string arquivo){
+void Net::saveNet(char* arquiv){
 	FILE *arq;
-    char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
+/*    char *arqui = (char*) malloc((arquivo.size() + 1)*sizeof(char));
     arquivo.copy(arqui, arquivo.size() + 1);
     arqui[arquivo.size()] = '\0';
 	// Abre um arquivo TEXTO para ESCRITA
-	arq = fopen(arqui, "w");
-	free(arqui);
+*/	arq = fopen(arquiv, "w");
+	//free(arqui);
 	if (arq == NULL){  // Se houve erro na abertura
 		printf("Problemas na abertura do arquivo\n");
     	return;

@@ -12,10 +12,11 @@ public:
     vector<unsigned int>* getTasks();
     void printMachine();
     void setOrder(bool pOrder);
+    bool getOrder();
     void setRelativize(bool pRelativize);
     bool getRelativize();
     void setSubtract(bool pSubtract);
-
+    bool getSubtract();
     //sensores
     unsigned int getNextTask();
     unsigned int getNumberNextTask();

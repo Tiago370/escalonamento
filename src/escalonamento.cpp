@@ -83,7 +83,7 @@ void Escalonamento::putTaskOnTheMachine(unsigned int i){
         }
     }
     numberNextTask++;
-    nextTask = task[numberNextTask];
+    if(numberNextTask < task.size()) nextTask = task[numberNextTask];
 }
 unsigned int Escalonamento::getNumberTasks(){
     return nTasks;
@@ -119,12 +119,18 @@ unsigned int Escalonamento::getNumberMachines(){
  void Escalonamento::setOrder(bool pOrder){
      this->order = pOrder;
  }
+ bool Escalonamento::getOrder(){
+     return order;
+ }
  void Escalonamento::setRelativize(bool pRelativize){
     this->relativize = pRelativize;
  }
  bool Escalonamento::getRelativize(){
      return this->relativize;
  }
- void  Escalonamento::setSubtract(bool pSubtract){
+ void Escalonamento::setSubtract(bool pSubtract){
      this->subtract = pSubtract;
+ }
+ bool Escalonamento::getSubtract(){
+     return subtract;
  }

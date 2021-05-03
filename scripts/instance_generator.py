@@ -13,7 +13,7 @@ def write_test_to_file(path, number_of_machines, jobs):
     file = open(path, "w")
     file.write(content)
     file.close()
-    print("Caso gerado em '%s'." % path)
+    #print("Caso gerado em '%s'." % path)
 
 def write_test_metadata(path, number_of_machines, jobs):
     '''
@@ -75,10 +75,12 @@ for i in range(1,101):
 file_path = "./../instancias/treino/homogenea/"
 for i in range(1,101):
     write_test_to_file(file_path+str(i), 10, knuth_shuffle(homogenea()))
+    print("instancias/treino/homogenea/%d" % i)
 
 file_path = "./../instancias/treino/hetereogenea/"
 for i in range(1,101):
     write_test_to_file(file_path+str(i), 10, knuth_shuffle(hetereogenea()))
+    print("instancias/treino/hetereogenea/%d" % i)
 
 
 """

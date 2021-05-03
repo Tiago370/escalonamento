@@ -45,7 +45,7 @@ public:
 	void imprimeRede();
 	void rerandom();
 	void openNet(char* arquiv);
-	void saveNet(string arquivo);
+	void saveNet(char* arquiv);
 
 private:
 	vector<vector<Neuron>>* getLayers();

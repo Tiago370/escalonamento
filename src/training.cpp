@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <limits.h>
 #include <string>
+#include <fstream>
+#include <time.h>
 #include "training.h"
 //#include "escalonamento.h"
 #include "Net.h"
@@ -41,18 +43,20 @@ void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, boo
 void escalonamento_training(char* net_file, char* instance_list_file, bool order, bool relativize, bool subtract, unsigned int nGenerations, unsigned int nPopulation, unsigned int nHiddenLayers, unsigned int nHiddenNeurons){
 	srand(666); //Fixar uma seed para permitir a reprodutibulidade
 
-	int nInputs = 11;// 11 maquinas + numero da tarefa + tarefa
+	int nInputs = 10;// 11 maquinas + numero da tarefa + tarefa
     if(!relativize) nInputs++;
-	int nOutputs = 11;
+	int nOutputs = 10;
 
     //criar o conjuto de pares
-    unsigned int nTrainingSet = 5;
+    unsigned int nTrainingSet = 100;
     vector<Escalonamento> escalonamentos;
     generateTrainingSet(&escalonamentos, nTrainingSet, instance_list_file, order, relativize, subtract);
 	squareRandom_mutation(nInputs, nHiddenLayers, nHiddenNeurons, nOutputs, nPopulation, nGenerations, &escalonamentos, nTrainingSet, net_file);
+    exit(1);
 }
 void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, int nOutputs,
 		int nPopulation, int nGenerations, vector<Escalonamento>* escalonamentos, int nTrainingSet, char* net_file){
+    cout << "nHiddenLayers: " << nHiddenLayers << " nHiddenNeurons: " << nHiddenNeurons << endl;
 	Net champion(nInputs, nHiddenLayers, nHiddenNeurons, nOutputs);
     champion.setFitness(__DBL_MAX__);
 	vector<Net> populacao;
@@ -63,7 +67,10 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
     long long fitness = LONG_LONG_MAX;
     int nElite = nPopulation*0.05;
 	//Criterio de parada
-	while(generation_number < nGenerations){
+    unsigned int stop = 0;
+    clock_t end,start;
+    start = clock();
+	while(generation_number < nGenerations && stop < 200){
         //cerr << "aqui começo" << endl;
 		//Para cada individuo da populacao
 		for(int i = 0; i < nPopulation; i++){
@@ -79,6 +86,7 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
                 champion.setFitness(populacao[i].getFitness());
                 fitness = populacao[i].getFitness();
                 cout << "Melhor Fitness: " << fitness << endl;
+                stop = 0;
             }
 
         }
@@ -104,14 +112,32 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
 			//populacao[nPopulation-1].copiar_rede(&champion);
 		}
 		generation_number++;
+        stop++;
         //cerr << "aqui fim" << endl;
 
 	}
+    end = clock();
+    std::ofstream outfile;
+    outfile.open("dados-treinamento-redes.csv", std::ios_base::app); // append instead of overwrite
+    if(escalonamentos->at(0).getOrder()) outfile << "O";
+    if(escalonamentos->at(0).getRelativize()) outfile << "R";
+    if(escalonamentos->at(0).getSubtract()) outfile << "S";
+    outfile << ",";
+    outfile << nHiddenLayers;
+    outfile << "x";
+    outfile << nHiddenNeurons;
+    outfile << ",";
+    outfile << generation_number;
+    outfile << ",";
+    outfile << (double)(end-start)/(double)(CLOCKS_PER_SEC);
+    outfile << endl;
+    //outfile << "Configuraçao,Tamanho,nGerações,Tempo de Treinamento" << endl;
+    outfile.close();
     cout << "Fitness do campeão " << champion.getFitness() << endl;
     //play(&champion, &(escalonamentos->at(0)), 13, 11, true);
     //play(&champion, &(escalonamentos->at(1)), 13, 11, true);
     //play(&champion, &(escalonamentos->at(2)), 13, 11, true);
-    play(&champion, &(escalonamentos->at(3)), nInputs, 11, true);
+    //play(&champion, &(escalonamentos->at(3)), nInputs, 10, true);
     //play(&champion, &(escalonamentos->at(4)), 13, 11, true);
     champion.saveNet(net_file);
 }
@@ -143,6 +169,7 @@ void generateTrainingSet(vector<Escalonamento>* escalonamentos, unsigned int nTr
         escalonamento.setRelativize(relativize);
         escalonamento.setSubtract(subtract);
         escalonamentos->push_back(escalonamento);
+        free(instance);
     }
     fclose(arq_instance_list_file);
  }
