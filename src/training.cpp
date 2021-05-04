@@ -8,7 +8,7 @@
 //#include "escalonamento.h"
 #include "Net.h"
 using namespace std;
-void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, bool imprime){
+void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, bool imprime, unsigned int* makeSpan){
 	//estruturas auxiliares
     vector<double> inputs(nInputs);
 	vector<double> outputs(nOutputs);
@@ -37,6 +37,7 @@ void play(Net *net, Escalonamento *escalonamento, int nInputs, int nOutputs, boo
 //    double fitness = (double)net->getFitness() + (double)square->fitness();
     net->setFitness(net->getFitness() + escalonamento->getMakeSpan());
     if (imprime)escalonamento->printMachine();
+    *makeSpan = escalonamento->getMakeSpan();
     escalonamento->reset();
 }
 
@@ -78,7 +79,8 @@ void squareRandom_mutation(int nInputs, int nHiddenLayers, int nHiddenNeurons, i
             populacao[i].setFitness(0);
             //Para cada caso de teste
             for(int j = 0; j < nTrainingSet; j++){
-                play(&populacao[i], &(escalonamentos->at(j)), nInputs, nOutputs, false);
+                unsigned int ignorado;
+                play(&populacao[i], &(escalonamentos->at(j)), nInputs, nOutputs, false, &ignorado);
                 //if(j == 0) exit(0);
             }
             if(populacao[i].getFitness() < fitness){
@@ -173,20 +175,27 @@ void generateTrainingSet(vector<Escalonamento>* escalonamentos, unsigned int nTr
     }
     fclose(arq_instance_list_file);
  }
- void run(char* net_file, char* instance_file, bool order, bool relativize, bool subtract){
+ void run(char* net_file, char* instance_file, bool order, bool relativize, bool subtract, bool print, char* data_file){
     Escalonamento escalonamento = Escalonamento();
-    printf("%s\n",instance_file);
+    //printf("%s\n", data_file);
 	escalonamento.readInstance(instance_file);
-    cout << "run" << endl;
     escalonamento.setOrder(order);
     escalonamento.setRelativize(relativize);
     escalonamento.setSubtract(subtract);
-    cout << "run" << endl;
 	Net net = Net(1,1,1,1);
-    printf("%s\n",net_file);
+    //printf("%s\n",net_file);
 	net.openNet(net_file);
-    printf("%s\n",net_file);
-    cout << "run" << endl;
-    play(&net, &escalonamento, net.getNInputs(), net.getNOutput(), true);
+    //printf("%s\n",net_file);
+    //cout << "run" << endl;
+    unsigned int makeSpan = 0;
 
+    clock_t end,start;
+    start = clock();
+    play(&net, &escalonamento, net.getNInputs(), net.getNOutput(), print, &makeSpan);
+    end = clock();
+    //cout << makeSpan << endl;
+    std::ofstream outfile;
+    outfile.open(data_file, std::ios_base::app); // append instead of overwrite
+    outfile  << makeSpan << "," << (double)(end-start)/(double)(CLOCKS_PER_SEC) << endl;
+    outfile.close();
 }

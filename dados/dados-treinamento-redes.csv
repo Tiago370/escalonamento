@@ -1,0 +1,20 @@
+Configuraçao,Tamanho,nGerações,Tempo de Treinamento
+hom-
+OR,2x2,308,161.39
+hom-
+OR,4x4,238,160.066
+hom-
+OR,8x8,352,642.685
+hom-
+OR,10x10,449,1303.59
+het-
+ORS,2x2,1067,554.4
+het-
+OR,4x4,432,310.167
+het-
+OR,8x8,552,799.094
+het-
+OR,10x10,1070,2622.9
+het-
+OR,2x2,1,0.414302
+OR,2x2,665,272.543

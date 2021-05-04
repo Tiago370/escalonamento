@@ -10,9 +10,12 @@ int main(int argc, char **argv) {
 	bool order = false;
 	bool relativize = false;
 	bool subtract = false;
+	bool print = false;
+
 	char *net_file = (char*) malloc(sizeof(char)*100);
 	char *instance_list_file = (char*) malloc(sizeof(char)*100);
 	char *instance_file = (char*) malloc(sizeof(char)*100);
+	char *data_file = (char*) malloc(sizeof(char)*100);
 	unsigned int nGenerations = 1000;
 	unsigned int nPopulation = 100;
 	unsigned int nHiddenLayers = 2;
@@ -23,7 +26,6 @@ int main(int argc, char **argv) {
         printf("    ./build/escalonamento <função>\n");
         exit(1);
     }else if (strcmp("run", argv[1]) == 0){
-		printf("entrou run");
 		for(int i = 2; i < argc; i++){
 			if(strcmp("-order", argv[i]) == 0){
 				order = true;
@@ -38,11 +40,14 @@ int main(int argc, char **argv) {
 				//printf("instance\n");
 				strcpy(instance_file, argv[i+1]);
 				//printf("%s\n", instance_list_file);
+			}else if(strcmp("-print", argv[i]) == 0){
+				//printf("printando\n");
+				print = true;
+			}else if(strcmp("-data", argv[i]) == 0){
+				strcpy(data_file, argv[i+1]);
 			}else{}
-			printf("bbbbbbbbbbbbbbbb\n");
 		}
-		printf("aaaaaaaaaaaaaaaaaa\n");
-		run(net_file, instance_file, order, relativize, subtract);
+		run(net_file, instance_file, order, relativize, subtract, print, data_file);
         exit(0);
     }else if (strcmp("train", argv[1]) == 0){
 		for(int i = 2; i < argc; i++){

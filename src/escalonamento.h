@@ -9,6 +9,7 @@ public:
     unsigned int getNumberTasks();
     unsigned int getNumberMachines();
     unsigned int getMakeSpan();
+    void setMakeSpan(unsigned int);
     vector<unsigned int>* getTasks();
     void printMachine();
     void setOrder(bool pOrder);
